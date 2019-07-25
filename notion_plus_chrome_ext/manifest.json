@@ -1,0 +1,17 @@
+{
+    "manifest_version": 2,
+    "name": "Notion plus",
+    "version": "1.0",
+    "description": "make notion do more things",
+    "content_scripts": [
+        {
+            "matches": [
+                "*://www.notion.so/*"
+            ],
+            "js": [
+                "plus.js"
+            ],
+            "run_at": "document_end"
+        }
+    ]
+}
