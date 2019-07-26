@@ -9,7 +9,6 @@ pylint = "*"
 
 [packages]
 flask = "*"
-wikipedia = "*"
 flask-cors = "*"
 requests-html = "*"
 notion = {editable = true,git = "https://github.com/mayneyao/notion-py.git"}
