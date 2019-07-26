@@ -14,8 +14,9 @@ from actions import notion_plus
 conf = ConfigParser()
 conf.read('config.ini')
 token = conf.get('notion', 'token')
+timezone = conf.get('notion', 'timezone')
 auth_token = conf.get('security', 'auth_token')
-client = NotionClient(token_v2=token)
+client = NotionClient(token_v2=token, timezone=timezone)
 
 app = Flask(__name__)
 CORS(app)
