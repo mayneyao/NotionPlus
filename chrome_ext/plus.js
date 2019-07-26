@@ -62,7 +62,11 @@ function NotionPlus(e) {
                 }
             }
         } catch (error) {
-            console.log(error)
+            if (error instanceof TypeError) {
+                // 
+            } else {
+                console.log(error)
+            }
         }
     } else {
         console.log("click from non-table page")
