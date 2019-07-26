@@ -1,0 +1,16 @@
+.App {
+  text-align: center;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+}
+
+button {
+  height: 30px;
+  width: 30px;
+  outline: none;
+}

@@ -1,7 +1,7 @@
 from types import SimpleNamespace
 from configparser import ConfigParser
 
-from flask import Flask, escape, request
+from flask import Flask, escape, request, Response
 from flask_cors import CORS
 from notion.client import NotionClient
 from notion.collection import CollectionQuery
@@ -14,6 +14,7 @@ from actions import notion_plus
 conf = ConfigParser()
 conf.read('config.ini')
 token = conf.get('notion', 'token')
+auth_token = conf.get('security', 'auth_token')
 client = NotionClient(token_v2=token)
 
 app = Flask(__name__)
@@ -39,17 +40,21 @@ def get_notion_action_code(action_name):
 
 @app.route('/', methods=['POST'])
 def npp():
-    act = SimpleNamespace(**request.json)
-    action_name = None
-    obj = client.get_block(act.blockID)
+    auth = request.headers.get('authtoken')
+    if auth == auth_token:
+        act = SimpleNamespace(**request.json)
+        action_name = None
+        obj = client.get_block(act.blockID)
 
-    if act.name.startswith('#'):
-        action_name = act.name.split('#')[-1]
-        _, action_code = get_notion_action_code(action_name)
-        exec(action_code)
-    elif act.name.startswith('@'):
-        action_name = act.name.split('@')[-1]
-        func = notion_plus.action_func_map[action_name]
-        func(obj)
-    setattr(obj, action_name, False)
-    return 'OK!'
+        if act.name.startswith('#'):
+            action_name = act.name.split('#')[-1]
+            _, action_code = get_notion_action_code(action_name)
+            exec(action_code)
+        elif act.name.startswith('@'):
+            action_name = act.name.split('@')[-1]
+            func = notion_plus.action_func_map[action_name]
+            func(obj)
+        setattr(obj, action_name, False)
+        return 'Ok'
+    else:
+        return 'Bad Token'

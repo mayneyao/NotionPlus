@@ -1,0 +1,36 @@
+{
+  "name": "NotionPlus",
+  "version": "1.0",
+  "description": "Empower Notion",
+  "permissions": [
+    "storage"
+  ],
+  "__firefox__browser_specific_settings": {
+    "gecko": {
+      "id": "addon@example.com"
+    }
+  },
+  "__chrome__options_page": "options.html",
+  "__firefox__options_ui": {
+    "page": "options.html",
+    "browser_style": true
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.notion.so/*"
+      ],
+      "js": [
+        "/static/js/plus.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "logo/img_0628_16.png",
+    "32": "logo/img_0628_32.png",
+    "48": "logo/img_0628_48.png",
+    "128": "logo/img_0628_128.png"
+  },
+  "manifest_version": 2
+}
