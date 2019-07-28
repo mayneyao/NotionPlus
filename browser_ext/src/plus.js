@@ -2,23 +2,37 @@ const CHECKBOX_MARK = "M0,3 C0,1.34314 1.34326,0 3,0 L11,0 C12.6567,0 14,1.34314
 const NEW_MARK = "17,8 10,8 10,1 8,1 8,8 1,8 1,10 8,10 8,17 10,17 10,10 17,10 "
 
 const doAction = (actionName, blockID, lastEle) => {
-    chrome.storage.sync.get(['serverHost', 'authToken'], (data) => {
-        let { serverHost, authToken } = data;
-        fetch(serverHost, {
-            method: "POST",
-            body: JSON.stringify({ "name": actionName, blockID }),
-            headers: new Headers({
-                'Content-Type': 'application/json',
-                'authtoken': `${authToken}`
-            })
-        }).then(res => {
-            if (res.status === 200) {
-                lastEle.style.background = ''
+    chrome.storage.sync.get(['serverHost', 'authToken', 'actionTableUrl'], (data) => {
+        let { serverHost, authToken, actionTableUrl } = data;
+
+        if (!serverHost || !authToken) {
+            alert("⚠️ 请在配置页中配置服务器地址和安全码")
+        } else {
+            if (actionName.startsWith("#") && !actionTableUrl) {
+                alert("⚠️ 您正在执行一项动态任务，但是动态任务表格地址没有正确配置，请在配置页中完善")
             } else {
-                lastEle.style.background = 'red'
-                console.log(`执行动作 ${actionName} 服务器遇到问题: ${res.statusText}`)
+                lastEle.style.background = '#ccc'
+                fetch(serverHost, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        actionName,
+                        blockID,
+                        actionTableUrl
+                    }),
+                    headers: new Headers({
+                        'Content-Type': 'application/json',
+                        'authtoken': `${authToken}`
+                    })
+                }).then(res => {
+                    if (res.status === 200) {
+                        lastEle.style.background = ''
+                    } else {
+                        lastEle.style.background = 'red'
+                        console.log(`执行动作 ${actionName} 服务器遇到问题: ${res.statusText}`)
+                    }
+                })
             }
-        })
+        }
     })
 }
 
@@ -61,7 +75,6 @@ function NotionPlus(e) {
                     let blockID = actionRow.dataset.blockId
                     let actionName = actionColIndexNameMap[clickEleColIndex]
                     console.log(actionName, blockID)
-                    lastEle.style.background = '#ccc'
                     doAction(actionName, blockID, lastEle)
                 }
             }
