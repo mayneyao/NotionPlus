@@ -35,9 +35,9 @@ cp config.sample.ini config.ini
 
 2. chrome extension config
 
-+ server: default `127.0.0.1:5000` (flask default)
-+ auth_code: same as backend config (nobody knows but you)
-
++ serverHost: If you run the backend service locally, it should be http://127.0.0.1:5000
++ authToken: Same as `conf.ini > security > auth_token`  (nobody knows but you)
++ actionTableUrl: Where dynamic task code is (a notion table browser url)
 
 ### Run
 
