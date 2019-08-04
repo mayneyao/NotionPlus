@@ -8,7 +8,8 @@ export default class Settings extends React.Component {
     super(props)
     this.state = {
       serverHost: '',
-      authToken: ''
+      authToken: '',
+      actionTableUrl: ''
     }
   }
 
@@ -17,12 +18,13 @@ export default class Settings extends React.Component {
   }
 
   initSettings = async () => {
-    const data = await browser.storage.sync.get(['serverHost', 'authToken']);
+    const data = await browser.storage.sync.get(['serverHost', 'authToken', 'actionTableUrl']);
 
-    const { serverHost, authToken } = data
+    const { serverHost, authToken, actionTableUrl } = data
     this.setState({
       serverHost,
-      authToken
+      authToken,
+      actionTableUrl
     });
   }
 
@@ -31,17 +33,18 @@ export default class Settings extends React.Component {
   };
 
   handleSubmit = () => {
-    const { serverHost, authToken } = this.state
-    browser.storage.sync.set({ serverHost, authToken }).then(() => {
-      console.log(serverHost, authToken);
+    // const { serverHost, authToken, actionTableUrl } = this.state
+    browser.storage.sync.set(this.state).then(() => {
+      // console.log(serverHost, authToken, actionTableUrl);
+      console.log(this.state)
     });
   }
 
   render() {
-    const { serverHost, authToken } = this.state
+    const { serverHost, authToken, actionTableUrl } = this.state
     return (
       <div className="main" >
-        <h1>服务器设置</h1>
+        <h1>服务器</h1>
         <form noValidate autoComplete="off">
           <div>
             <TextField
@@ -63,6 +66,21 @@ export default class Settings extends React.Component {
               onChange={this.handleChange('authToken')}
               margin="normal"
               helperText="与后端 conf.ini > security > auth_token 保持一致"
+              fullWidth
+            />
+          </div>
+        </form>
+        <h1>Notion</h1>
+        <form noValidate autoComplete="off">
+          <div>
+            <TextField
+              id="actionTableUrl"
+              label="动态任务表格地址"
+              className="textField"
+              value={actionTableUrl}
+              onChange={this.handleChange('actionTableUrl')}
+              margin="normal"
+              helperText="后端将在此表格下查找动态任务代码"
               fullWidth
             />
           </div>

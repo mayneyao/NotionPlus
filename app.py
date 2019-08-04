@@ -22,8 +22,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-def get_notion_action_code(action_name):
-    action_table_url = conf.get('notion', 'action_table_url')
+def get_notion_action_code(action_name, action_table_url):
     actions_cv = client.get_collection_view(action_table_url)
 
     action_block = None
@@ -36,7 +35,7 @@ def get_notion_action_code(action_name):
     for block in action_block.children:
         if isinstance(block, CodeBlock):
             action_code = block.title
-    return action_block, action_code
+    return action_code
 
 
 @app.route('/', methods=['POST'])
@@ -47,12 +46,15 @@ def npp():
         action_name = None
         obj = client.get_block(act.blockID)
 
-        if act.name.startswith('#'):
-            action_name = act.name.split('#')[-1]
-            _, action_code = get_notion_action_code(action_name)
-            exec(action_code)
-        elif act.name.startswith('@'):
-            action_name = act.name.split('@')[-1]
+        if act.actionName.startswith('#'):
+            action_name = act.actionName.split('#')[-1]
+            action_code = get_notion_action_code(action_name, act.actionTableUrl)
+            if action_code:
+                exec(action_code)
+            else:
+                return 'Task Code Not Found'
+        elif act.actionName.startswith('@'):
+            action_name = act.actionName.split('@')[-1]
             func = notion_plus.action_func_map[action_name]
             func(obj)
         setattr(obj, action_name, False)
