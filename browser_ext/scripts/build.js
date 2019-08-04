@@ -105,13 +105,13 @@ checkBrowsers(paths.appPath, isInteractive)
       }
 
       console.log('File sizes after gzip:\n');
-      printFileSizesAfterBuild(
-        stats,
-        previousFileSizes,
-        paths.appBuild,
-        WARN_AFTER_BUNDLE_GZIP_SIZE,
-        WARN_AFTER_CHUNK_GZIP_SIZE
-      );
+      // printFileSizesAfterBuild(
+      //   stats,
+      //   previousFileSizes,
+      //   paths.appBuild,
+      //   WARN_AFTER_BUNDLE_GZIP_SIZE,
+      //   WARN_AFTER_CHUNK_GZIP_SIZE
+      // );
       console.log();
     },
     err => {
