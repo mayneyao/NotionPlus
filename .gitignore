@@ -1,3 +1,9 @@
+.vscode
+.DS_Store
+
+# pipenv install foo  --skip-lock 
+Pipfile.lock
+
 # config
 config.ini
 
