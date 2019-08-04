@@ -1,7 +1,7 @@
 {
   "name": "NotionPlus",
-  "version": "1.0",
-  "description": "Empower Notion",
+  "version": "1.1",
+  "description": "Programming in Notion.so",
   "permissions": [
     "storage"
   ],
