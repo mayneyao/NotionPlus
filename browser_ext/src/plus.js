@@ -2,7 +2,7 @@ const CHECKBOX_MARK = "M0,3 C0,1.34314 1.34326,0 3,0 L11,0 C12.6567,0 14,1.34314
 const NEW_MARK = "17,8 10,8 10,1 8,1 8,8 1,8 1,10 8,10 8,17 10,17 10,10 17,10 "
 
 const doAction = (actionName, blockID, lastEle) => {
-    chrome.storage.sync.get(['serverHost', 'authToken', 'actionTableUrl'], (data) => {
+    browser.storage.sync.get(['serverHost', 'authToken', 'actionTableUrl']).then((data) => {
         let { serverHost, authToken, actionTableUrl } = data;
 
         if (!serverHost || !authToken) {
