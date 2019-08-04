@@ -44,28 +44,29 @@ export default class Settings extends React.Component {
     const { serverHost, authToken, actionTableUrl } = this.state
     return (
       <div className="main" >
-        <h1>服务器</h1>
+        <h1>ServerHost</h1>
         <form noValidate autoComplete="off">
           <div>
             <TextField
               id="serverHost"
-              label="服务器接口"
+              label="serverHost"
               className="textField"
               value={serverHost}
               onChange={this.handleChange('serverHost')}
               margin="normal"
+              helperText="If you run the backend service locally, it should be http://127.0.0.1:5000"
               fullWidth
             />
           </div>
           <div>
             <TextField
               id="authToken"
-              label="安全码"
+              label="authToken"
               className="textField"
               value={authToken}
               onChange={this.handleChange('authToken')}
               margin="normal"
-              helperText="与后端 conf.ini > security > auth_token 保持一致"
+              helperText="Same as `conf.ini > security > auth_token`"
               fullWidth
             />
           </div>
@@ -75,18 +76,18 @@ export default class Settings extends React.Component {
           <div>
             <TextField
               id="actionTableUrl"
-              label="动态任务表格地址"
+              label="actionTableUrl"
               className="textField"
               value={actionTableUrl}
               onChange={this.handleChange('actionTableUrl')}
               margin="normal"
-              helperText="后端将在此表格下查找动态任务代码"
+              helperText="Where dynamic task code is (a notion table browser url)"
               fullWidth
             />
           </div>
         </form>
         <Button color="primray" fullWidth onClick={this.handleSubmit}>
-          保存
+          Save
         </Button>
       </div>)
   }
