@@ -44,7 +44,23 @@ export default class Settings extends React.Component {
     const { serverHost, authToken, actionTableUrl } = this.state
     return (
       <div className="main" >
-        <h1>ServerHost</h1>
+        <h1>Notion</h1>
+        <form noValidate autoComplete="off">
+          <div>
+            <TextField
+              id="actionTableUrl"
+              label="actionTableUrl"
+              className="textField"
+              value={actionTableUrl}
+              onChange={this.handleChange('actionTableUrl')}
+              margin="normal"
+              helperText="Where dynamic task code is (a notion table browser url)"
+              fullWidth
+            />
+          </div>
+        </form>
+        <h1>ServerHost (Optional)</h1>
+        <span> If you write task code in Python, you need to configure this</span>
         <form noValidate autoComplete="off">
           <div>
             <TextField
@@ -67,21 +83,6 @@ export default class Settings extends React.Component {
               onChange={this.handleChange('authToken')}
               margin="normal"
               helperText="Same as `conf.ini > security > auth_token`"
-              fullWidth
-            />
-          </div>
-        </form>
-        <h1>Notion</h1>
-        <form noValidate autoComplete="off">
-          <div>
-            <TextField
-              id="actionTableUrl"
-              label="actionTableUrl"
-              className="textField"
-              value={actionTableUrl}
-              onChange={this.handleChange('actionTableUrl')}
-              margin="normal"
-              helperText="Where dynamic task code is (a notion table browser url)"
               fullWidth
             />
           </div>

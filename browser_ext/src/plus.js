@@ -1,49 +1,42 @@
 import Notabase from 'notabase'
-import { getUrlBlockId } from 'notabase/src/utils'
 
 const CHECKBOX_MARK = "M0,3 C0,1.34314 1.34326,0 3,0 L11,0 C12.6567,0 14,1.34314 14,3 L14,11 C14,12.6569 12.6567,14 11,14 L3,14 C1.34326,14 0,12.6569 0,11 L0,3 Z M3,1.5 C2.17139,1.5 1.5,2.17157 1.5,3 L1.5,11 C1.5,11.8284 2.17139,12.5 3,12.5 L11,12.5 C11.8286,12.5 12.5,11.8284 12.5,11 L12.5,3 C12.5,2.17157 11.8286,1.5 11,1.5 L3,1.5 Z M2.83252,6.8161 L3.39893,6.27399 L3.57617,6.10425 L3.92334,5.77216 L4.26904,6.10559 L4.44531,6.27582 L5.58398,7.37402 L9.28271,3.81073 L9.45996,3.64008 L9.80664,3.3056 L10.1538,3.63989 L10.3311,3.81067 L10.8936,4.35303 L11.0708,4.52399 L11.4434,4.88379 L11.0708,5.24353 L10.8936,5.41437 L6.1084,10.0291 L5.93115,10.2 L5.58398,10.5344 L5.23682,10.2 L5.05957,10.0292 L2.83057,7.87946 L2.65283,7.70801 L2.27832,7.34674 L2.6543,6.98694 L2.83252,6.8161 Z"
 const NEW_MARK = "17,8 10,8 10,1 8,1 8,8 1,8 1,10 8,10 8,17 10,17 10,10 17,10 "
 
-
 let actionCode = {}
 // url map Collection
-let collectionMap = {
 
-}
 let nb = new Notabase()
 console.log(nb)
 
 const getAllActionCode = () => {
     browser.storage.sync.get(['serverHost', 'authToken', 'actionTableUrl']).then((data) => {
         let { actionTableUrl } = data;
-        let nb = new Notabase()
-        nb._fetch(actionTableUrl).then(actions => {
-            actions.rows.map(actionRow => {
-                let codeBlockId = actionRow.content[0]
-                const { type, properties } = nb.blockStore[codeBlockId].value
-                let code = properties.title[0][0]
-                let lang = properties.language[0][0]
-                if (type === "code" && lang === "JavaScript") {
-                    actionCode[actionRow.Name] = code
-                }
-            })
-            console.log("action code is ready")
-            console.log(actionCode)
-        })
 
+        if (actionTableUrl) {
+            let nb = new Notabase()
+            nb.fetch(actionTableUrl).then(actions => {
+                actions.rows.map(actionRow => {
+                    let codeBlockId = actionRow.content[0]
+                    const { type, properties } = nb.blockStore[codeBlockId].value
+                    let code = properties.title[0][0]
+                    let lang = properties.language[0][0]
+                    if (type === "code" && lang === "JavaScript") {
+                        actionCode[actionRow.Name] = code
+                    }
+                })
+                console.log("action code is ready")
+                console.log(actionCode)
+            })
+        } else {
+            // alert("⚠️ 您正在执行一项动态任务，但是动态任务表格地址没有正确配置，请在配置页中完善")
+        }
     })
 }
 
 const doAction = async (actionName, blockID, lastEle) => {
-    let thisCollection
-    let collectionUrlID = getUrlBlockId(window.location.href)
-    if (collectionMap.hasOwnProperty(collectionUrlID)) {
-        thisCollection = collectionMap[collectionUrlID]
-    } else {
-        thisCollection = await nb._fetch(window.location.href)
-        collectionMap[collectionUrlID] = thisCollection
-    }
-
+    let thisCollection = await nb.fetch(window.location.href)
+    // this row 
     let obj = thisCollection.rows.find(o => o.id === blockID)
 
     browser.storage.sync.get(['serverHost', 'authToken', 'actionTableUrl']).then(async (data) => {
@@ -53,8 +46,13 @@ const doAction = async (actionName, blockID, lastEle) => {
             // js 代码浏览器运行
             let code = actionCode[actionName.slice(1)]
             lastEle.style.background = '#ccc'
-            eval(code)
-            lastEle.style.background = ''
+            try {
+                eval(code)
+                lastEle.style.background = ''
+            } catch (error) {
+                lastEle.style.background = 'red'
+                console.log(error)
+            }
 
         } else {
             // python 代码走服务器运行
@@ -146,17 +144,5 @@ function NotionPlus(e) {
 
 }
 document.addEventListener('click', NotionPlus)
-console.log("激活 NontionPlus")
 getAllActionCode()
-
-// setTimeout(() => {
-//     let notionTableNewRowBtn = document.querySelector("#notion-app > div > div.notion-cursor-listener > div.notion-frame > div.notion-scroller.vertical.horizontal > div.notion-scroller > div > div > div:nth-child(4)")
-//     if (notionTableNewRowBtn) {
-//         // 表格注入
-//         console.log("获取表格")
-//         let nb = new Notabase()
-//         nb._fetch(window.location.href).then(res => {
-//             console.log(res)
-//         })
-//     }
-// }, 5000)
+console.log("NontionPlus has been activated 🎉")
