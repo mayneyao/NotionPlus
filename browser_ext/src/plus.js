@@ -7,6 +7,7 @@ let actionCode = {}
 // url map Collection
 
 let nb = new Notabase()
+window.nb = nb
 console.log(nb)
 
 const getAllActionCode = () => {
