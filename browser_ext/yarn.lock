@@ -6705,14 +6705,15 @@ normalize-url@^3.0.0:
   resolved "https://registry.npm.taobao.org/normalize-url/download/normalize-url-3.3.0.tgz#b2e1c4dc4f7c6d57743df733a4f5978d18650559"
   integrity sha1-suHE3E98bVd0PfczpPWXjRhlBVk=
 
-notabase@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.npmjs.org/notabase/-/notabase-0.7.0.tgz#1ce252d21ef7669ff7001f326fa26ca82ad9df6b"
-  integrity sha512-UR00cZwgg2dDSWY9KmtMrb+GfhSdSB5Tng4h/HbXw3PjKeo3+Mvh1Up6MApcq4CuK9csN9d0DJzE7X6X0iyrpQ==
+notabase@^0.7.1:
+  version "0.7.1"
+  resolved "https://registry.npmjs.org/notabase/-/notabase-0.7.1.tgz#4c99bb7b614477719904bdfb05c912f15460684f"
+  integrity sha512-3wFFQmny9d0Zhlx/H1X3YFmVZyJSIXZcn1jAxDykyfEGZb2S5kF+b67K7uRvp4uqncJWOM4R+andND59vI5IzA==
   dependencies:
     axios "^0.19.0"
     dayjs "^1.8.15"
     node-fetch "^2.6.0"
+    uuid "^3.3.3"
 
 npm-bundled@^1.0.1:
   version "1.0.6"
@@ -9734,6 +9735,11 @@ uuid@^3.0.1, uuid@^3.3.2:
   version "3.3.2"
   resolved "https://registry.npm.taobao.org/uuid/download/uuid-3.3.2.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fuuid%2Fdownload%2Fuuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha1-G0r0lV6zB3xQHCOHL8ZROBFYcTE=
+
+uuid@^3.3.3:
+  version "3.3.3"
+  resolved "https://registry.npmjs.org/uuid/-/uuid-3.3.3.tgz#4568f0216e78760ee1dbf3a4d2cf53e224112866"
+  integrity sha512-pW0No1RGHgzlpHJO1nsVrHKpOEIxkGg1xB+v0ZmdNH5OAeAwzAVrCnI2/6Mtx+Uys6iaylxa+D3g4j63IKKjSQ==
 
 validate-npm-package-license@^3.0.1:
   version "3.0.4"
