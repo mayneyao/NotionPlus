@@ -1,6 +1,6 @@
 {
   "name": "NotionPlus",
-  "version": "1.7",
+  "version": "1.9",
   "description": "Programming in Notion.so",
   "permissions": [
     "storage"
