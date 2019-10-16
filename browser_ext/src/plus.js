@@ -146,4 +146,4 @@ function NotionPlus(e) {
 }
 document.addEventListener('click', NotionPlus)
 getAllActionCode()
-console.log("NontionPlus(v1.9.2) has been activated 🎉")
+console.log("NontionPlus(v1.9.5) has been activated 🎉")
