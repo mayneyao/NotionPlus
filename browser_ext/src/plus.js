@@ -10,6 +10,7 @@ let actionCode = {}
 let nb = new Notabase()
 
 window.nb = nb
+window.actionCode = actionCode
 window.G2 = G2
 window.echarts = echarts
 // let reactRoot = document.createElement("div")
@@ -18,7 +19,7 @@ window.echarts = echarts
 window.openWrapper = (width, height) => {
     let gWrapper = document.getElementById("gWrapper")
     gWrapper.style.display = 'flex'
-    
+
     let npg = document.getElementById("np-g")
     if (width && height) {
         if (typeof width === "number" && typeof height === "number") {
@@ -70,6 +71,7 @@ closeWrapper.addEventListener('click', () => {
     gWrapper.append(npG)
 })
 
+
 const getAllActionCode = () => {
     browser.storage.sync.get(['serverHost', 'authToken', 'actionTableUrl']).then((data) => {
         let { actionTableUrl } = data;
@@ -77,12 +79,23 @@ const getAllActionCode = () => {
             let nb = new Notabase()
             nb.fetch(actionTableUrl).then(actions => {
                 actions.rows.map(actionRow => {
-                    let codeBlockId = actionRow.content[0]
-                    const { type, properties } = nb.blockStore[codeBlockId].value
-                    let code = properties.title[0][0]
-                    let lang = properties.language[0][0]
-                    if (type === "code" && lang === "JavaScript") {
-                        actionCode[actionRow.Name] = code
+                    let hasChildrenTask = Boolean(actionRow.Children)
+                    if (hasChildrenTask) {
+                        actionCode[actionRow.Name] = {
+                            hasChildrenTask,
+                            children: actionRow.Children.map(r => r.Name),
+                            childrenType: actionRow.ChildrenType
+                        }
+                    } else {
+                        let codeBlockId = actionRow.content[0]
+                        const { type, properties } = nb.blockStore[codeBlockId].value
+                        let code = properties.title[0][0]
+                        let lang = properties.language[0][0]
+                        actionCode[actionRow.Name] = {
+                            code,
+                            lang,
+                            hasChildrenTask,
+                        }
                     }
                 })
                 console.log("action code is ready")
@@ -95,58 +108,79 @@ const getAllActionCode = () => {
 }
 
 const doAction = async (actionName, blockID, lastEle) => {
-    let thisCollection = await nb.fetch(window.location.href)
+    // this table
+    let table = await nb.fetch(window.location.href)
     // this row 
-    let obj = thisCollection.rows.find(o => o.id === blockID)
+    let obj = table.rows.find(o => o.id === blockID)
 
     browser.storage.sync.get(['serverHost', 'authToken', 'actionTableUrl']).then(async (data) => {
         let { serverHost, authToken, actionTableUrl } = data;
 
-        if (actionCode.hasOwnProperty(actionName.slice(1))) {
+        let funcName = actionName.slice(1)
+        if (actionCode.hasOwnProperty(funcName)) {
             // js 代码浏览器运行
+            let func = actionCode[funcName]
 
-            let code = actionCode[actionName.slice(1)]
-            lastEle.style.background = '#ccc'
-            try {
-                eval(code)
-                lastEle.style.background = ''
-            } catch (error) {
-                lastEle.style.background = 'red'
-                console.log(error)
-            }
-
-        } else {
-            // python 代码走服务器运行
-            if (!serverHost || !authToken) {
-                alert("⚠️ 请在配置页中配置服务器地址和安全码")
-            } else {
-                if (actionName.startsWith("#") && !actionTableUrl) {
-                    alert("⚠️ 您正在执行一项动态任务，但是动态任务表格地址没有正确配置，请在配置页中完善")
-                } else {
-                    lastEle.style.background = '#ccc'
-                    fetch(serverHost, {
-                        method: "POST",
-                        body: JSON.stringify({
-                            actionName,
-                            blockID,
-                            actionTableUrl
-                        }),
-                        headers: new Headers({
-                            'Content-Type': 'application/json',
-                            'authtoken': `${authToken}`
-                        })
-                    }).then(res => {
-                        if (res.status === 200) {
-                            lastEle.style.background = ''
-                        } else {
-                            lastEle.style.background = 'red'
-                            console.log(`执行动作 ${actionName} 服务器遇到问题: ${res.statusText}`)
+            if (func.hasChildrenTask) {
+                switch (func.childrenType) {
+                    case "串":
+                        for (let taskName of func.children) {
+                            await doAction(`#${taskName}`, blockID, lastEle)
                         }
-                    })
+                        break
+                    case "并":
+                        func.children.map(async taskName => {
+                            await doAction(`#${taskName}`, blockID, lastEle)
+                        })
+                        break
+                }
+            } else {
+                switch (func.lang) {
+                    case "JavaScript":
+                        let code = func.code
+                        lastEle.style.background = '#ccc'
+                        try {
+                            eval(code)
+                            lastEle.style.background = ''
+                        } catch (error) {
+                            lastEle.style.background = 'red'
+                            console.log(error)
+                        }
+                        break
+                    case "Python":
+                        // python 代码走服务器运行
+                        if (!serverHost || !authToken) {
+                            alert("⚠️ 请在配置页中配置服务器地址和安全码")
+                        } else {
+                            if (actionName.startsWith("#") && !actionTableUrl) {
+                                alert("⚠️ 您正在执行一项动态任务，但是动态任务表格地址没有正确配置，请在配置页中完善")
+                            } else {
+                                lastEle.style.background = '#ccc'
+                                fetch(serverHost, {
+                                    method: "POST",
+                                    body: JSON.stringify({
+                                        actionName,
+                                        blockID,
+                                        actionTableUrl
+                                    }),
+                                    headers: new Headers({
+                                        'Content-Type': 'application/json',
+                                        'authtoken': `${authToken}`
+                                    })
+                                }).then(res => {
+                                    if (res.status === 200) {
+                                        lastEle.style.background = ''
+                                    } else {
+                                        lastEle.style.background = 'red'
+                                        console.log(`执行动作 ${actionName} 服务器遇到问题: ${res.statusText}`)
+                                    }
+                                })
+                            }
+                        }
+                        break
                 }
             }
         }
-
     })
 }
 
@@ -206,4 +240,4 @@ function NotionPlus(e) {
 }
 document.addEventListener('click', NotionPlus)
 getAllActionCode()
-console.log("NontionPlus(v1.9.7) has been activated 🎉")
+console.log("NontionPlus(v1.9.8) has been activated 🎉")
