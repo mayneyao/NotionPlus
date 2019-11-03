@@ -16,61 +16,69 @@ window.echarts = echarts
 // let reactRoot = document.createElement("div")
 // reactRoot.setAttribute("id", "reactRoot")
 
-window.openWrapper = (width, height) => {
-    let gWrapper = document.getElementById("gWrapper")
-    gWrapper.style.display = 'flex'
+window.openWrapper = openWrapper
 
-    let npg = document.getElementById("np-g")
-    if (width && height) {
-        if (typeof width === "number" && typeof height === "number") {
-            npg.style.width = `${width}px`
-            npg.style.height = `${height}px`
-        } else {
-            npg.style.width = width
-            npg.style.height = height
+const openWrapper = (width, height) => {
+    let gWrapper = document.getElementById("gWrapper")
+    if (gWrapper) {
+        gWrapper.style.display = 'flex'
+        let npg = document.getElementById("np-g")
+        if (width && height) {
+            if (typeof width === "number" && typeof height === "number") {
+                npg.style.width = `${width}px`
+                npg.style.height = `${height}px`
+            } else {
+                npg.style.width = width
+                npg.style.height = height
+            }
         }
+    } else {
+        insertWrapper()
+        openWrapper(width, height)
     }
 }
 
-const gWrapperHtml = `
-<div id="gWrapper"
-style="font-family: sans-serif;
-outline: 0;
-display:none;
-box-sizing: border-box;
-position: fixed;
-width: 100%;
-height: 100%;
-z-index: 1000;
-top: 0;
-left: 0;
-bottom: 0;
-right: 0;
-justify-content: center;
-background: #fff;">
-<div id="closeWrapper" style="z-index:2000;cursor: pointer;
-height: 30px;">关闭</div>
-<div id="np-g" style="position: absolute;margin-top:3em;">
-</div>
-</div>`
-const gWrapper = new DOMParser().parseFromString(gWrapperHtml, 'text/html').body.firstElementChild;
-document.getElementById("notion-app").append(gWrapper)
 
-let closeWrapper = document.getElementById("closeWrapper")
+const insertWrapper = () => {
+    const gWrapperHtml = `
+    <div id="gWrapper"
+    style="font-family: sans-serif;
+    outline: 0;
+    display:none;
+    box-sizing: border-box;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    justify-content: center;
+    background: #fff;">
+    <div id="closeWrapper" style="z-index:2000;cursor: pointer;
+    height: 30px;">关闭</div>
+    <div id="np-g" style="position: absolute;margin-top:3em;">
+    </div>
+    </div>`
+    const gWrapper = new DOMParser().parseFromString(gWrapperHtml, 'text/html').body.firstElementChild;
+    document.getElementById("notion-app").append(gWrapper)
 
-closeWrapper.addEventListener('click', () => {
-    let gWrapper = document.getElementById("gWrapper")
-    gWrapper.style.display = "none"
+    let closeWrapper = document.getElementById("closeWrapper")
 
-    gWrapper.removeChild(document.getElementById("np-g"))
-    let npG = document.createElement("div")
+    closeWrapper.addEventListener('click', () => {
+        let gWrapper = document.getElementById("gWrapper")
+        gWrapper.style.display = "none"
 
-    npG.setAttribute("id", "np-g")
-    npG.style.position = "absolute"
-    npG.style.paddingTop = "3em"
-    gWrapper.append(npG)
-})
+        gWrapper.removeChild(document.getElementById("np-g"))
+        let npG = document.createElement("div")
 
+        npG.setAttribute("id", "np-g")
+        npG.style.position = "absolute"
+        npG.style.paddingTop = "3em"
+        gWrapper.append(npG)
+    })
+}
 
 const getAllActionCode = () => {
     browser.storage.sync.get(['serverHost', 'authToken', 'actionTableUrl']).then((data) => {
@@ -240,4 +248,5 @@ function NotionPlus(e) {
 }
 document.addEventListener('click', NotionPlus)
 getAllActionCode()
-console.log("NontionPlus(v1.9.8) has been activated 🎉")
+insertWrapper()
+console.log("NontionPlus(v1.9.10) has been activated 🎉")
