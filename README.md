@@ -1,7 +1,8 @@
 # NotionPlus
 
-![demo](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F0fe2c6e3-d91d-4d76-af29-9e2458d01b8a%2Fnotion_plus_demo.gif)
-![echarts_demo](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F57bba247-b40a-406d-84c8-819e44dbacf9%2Fnp-echarts-demo.gif?width=800)
+## Features
+
+https://www.youtube.com/watch?v=6Nn-NnXiQiU
 
 ## Getting Started ([中文文档](https://gine.me/posts/cc5deab1a79f443c919b41ec80a50b7d))
 
