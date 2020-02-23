@@ -1,0 +1,43 @@
+{
+  "name": "nplus",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^4.9.3",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.43",
+    "@types/react": "^16.9.22",
+    "@types/react-dom": "^16.9.5",
+    "browser-extension-react-scripts": "1.0.1-alpha.5",
+    "cra-template-typescript": "1.0.2",
+    "notabase": "^0.8.5",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "typescript": "^3.8.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app",
+    "env": {
+      "browser": true,
+      "webextensions": true
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

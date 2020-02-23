@@ -1,13 +1,15 @@
 {
   "name": "NotionPlus",
-  "version": "1.9.10",
+  "version": "1.9.11",
   "description": "Programming in Notion.so",
   "permissions": [
-    "storage"
+    "activeTab",
+    "storage",
+    "http://127.0.0.1/"
   ],
   "__firefox__browser_specific_settings": {
     "gecko": {
-      "id": "i@gine.com"
+      "id": "i@gine.me"
     }
   },
   "__chrome__options_page": "options.html",
@@ -15,13 +17,19 @@
     "page": "options.html",
     "browser_style": true
   },
+  "background": {
+    "scripts": [
+      "/static/js/background.js"
+    ],
+    "persistent": false
+  },
   "content_scripts": [
     {
       "matches": [
         "*://www.notion.so/*"
       ],
       "js": [
-        "/static/js/plus.js"
+        "/static/js/content-script-plus.js"
       ],
       "run_at": "document_end"
     }
