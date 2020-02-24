@@ -1,7 +1,7 @@
 import Notabase from 'notabase';
 import { getFullBlockId } from 'notabase/src/utils';
+import { showMsg } from './components/msg';
 const nb = new Notabase()
-
 
 export interface IActionCode {
   [name: string]: {
@@ -10,6 +10,7 @@ export interface IActionCode {
     hasChildrenTask: boolean;
     children?: string[];
     childrenType?: string;
+    isGlobal?: boolean;
   }
 }
 
@@ -37,6 +38,7 @@ export const getAllActionCode = async () => {
             code,
             lang,
             hasChildrenTask,
+            isGlobal: actionRow.IsGlobal,
           }
         }
       }
@@ -101,28 +103,30 @@ export const doAction = async ({ actionCode, blockID, actionName, actionParams }
           let code = func.code
           try {
             console.log(actionParams);
-            if (actionParams?.length) {
+            if (func.isGlobal) {
               // FIXME: 占定为带参数的函数只能执行一次
               const funcBody = eval(code)
-              funcBody(...actionParams)
+              await funcBody(...actionParams)
+              console.log("exec global action");
             } else {
               console.log("obj is >>>>>", obj);
               if (!obj) {
                 console.log("action applay on all rows");
-                table.rows.map((_obj: any) => {
+                table.rows.map(async (_obj: any) => {
                   let obj = _obj;
                   const funcBody = eval(code)
-                  funcBody(...actionParams)
+                  await funcBody(...actionParams)
                 })
               } else {
                 console.log("action applay on one row");
                 const funcBody = eval(code)
-                funcBody(...actionParams)
+                await funcBody(...actionParams)
               }
             }
-
+            showMsg(`Action: ${actionName} done ✔`)
           } catch (error) {
             console.log(error)
+            showMsg("oops~ something error\n checkout devtools console")
           }
           break
         case "Python":

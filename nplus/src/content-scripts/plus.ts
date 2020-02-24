@@ -2,7 +2,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 
-import Dialog from './components/dialog/dialog'
+import Dialog from './components/dialog'
 
 const innertReactApp = () => {
   const reactRoot = document.createElement('div')

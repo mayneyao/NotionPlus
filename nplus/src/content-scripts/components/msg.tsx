@@ -32,13 +32,6 @@ export const Msg: React.FC<{ msg: string }> = ({ msg }) => {
         autoHideDuration={3000}
         onClose={handleClose}
         message={msg}
-        action={
-          <React.Fragment>
-            <Button color="secondary" size="small" onClick={handleClose}>
-              UNDO
-            </Button>
-          </React.Fragment>
-        }
       />
     </div>
   );
