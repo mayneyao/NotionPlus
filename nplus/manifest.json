@@ -1,11 +1,9 @@
 {
   "name": "NotionPlus",
-  "version": "1.9.11",
+  "version": "2.0.0",
   "description": "Programming in Notion.so",
   "permissions": [
-    "activeTab",
-    "storage",
-    "http://127.0.0.1/"
+    "storage"
   ],
   "__firefox__browser_specific_settings": {
     "gecko": {
@@ -26,7 +24,7 @@
   "content_scripts": [
     {
       "matches": [
-        "*://www.notion.so/*"
+        "*://*.notion.so/*"
       ],
       "js": [
         "/static/js/content-script-plus.js"

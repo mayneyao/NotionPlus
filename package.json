@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "aplayer": "^1.10.1",
+    "react-player": "^1.15.2"
+  }
+}

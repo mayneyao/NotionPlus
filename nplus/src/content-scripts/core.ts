@@ -1,17 +1,36 @@
-import Notabase from 'notabase';
-import { getFullBlockId } from 'notabase/src/utils';
-import { showMsg } from './components/msg';
+import Notabase, { getFullBlockId } from 'notabase';
+
+import { showMsg } from './msg';
 const nb = new Notabase()
 
 export interface IActionCode {
   [name: string]: {
-    code: string;
-    lang: 'JavaScript' | 'Python'
+    code?: string;
+    lang?: 'JavaScript' | 'Python'
     hasChildrenTask: boolean;
     children?: string[];
     childrenType?: string;
     isGlobal?: boolean;
   }
+}
+
+export interface IEnv {
+  [key: string]: string
+}
+
+// TODO: 环境变量
+export const getEnv = async () => {
+  const ENV: IEnv = {}
+  const data = await browser.storage.sync.get(['envTableUrl'])
+  const { envTableUrl } = data
+  const envs = await nb.fetch(envTableUrl)
+
+  envs.rows.forEach(row => {
+    const { Key, Value } = row
+    ENV[Key as string] = Value as string
+  })
+  return ENV;
+
 }
 
 export const getAllActionCode = async () => {
@@ -20,20 +39,23 @@ export const getAllActionCode = async () => {
   let { actionTableUrl } = data;
   if (actionTableUrl) {
     const actions = await nb.fetch(actionTableUrl)
-    actions.rows.map((actionRow: any) => {
+    actions.rows.forEach((actionRow: any) => {
       let hasChildrenTask = Boolean(actionRow.Children)
-      if (hasChildrenTask) {
-        actionCode[actionRow.Name] = {
+      const actionRowName: string = actionRow.Name
+      if (hasChildrenTask && actionRowName) {
+        actionCode[actionRowName] = {
           hasChildrenTask,
-          children: actionRow.Children.map(r => r.Name),
-          childrenType: actionRow.ChildrenType
+          children: actionRow.Children.map((r: any) => r.Name),
+          childrenType: actionRow.ChildrenType,
+          isGlobal: actionRow.IsGlobal,
         }
       } else {
         let codeBlockId = actionRow.content && actionRow.content[0]
         if (codeBlockId) {
+          // eslint-disable-next-line
           const { type, properties } = nb.blockStore[codeBlockId].value
-          let code = properties.title[0][0]
-          let lang = properties.language[0][0]
+          let code = properties && properties.title[0][0]
+          let lang = properties && properties.language[0][0]
           actionCode[actionRow.Name] = {
             code,
             lang,
@@ -46,7 +68,7 @@ export const getAllActionCode = async () => {
     console.log("action code is ready")
     console.log(actionCode)
   } else {
-    // alert("⚠️ 您正在执行一项动态任务，但是动态任务表格地址没有正确配置，请在配置页中完善")
+    return;
   }
   return actionCode
 }
@@ -61,11 +83,6 @@ interface ActionParams {
 export const doAction = async ({ actionCode, blockID, actionName, actionParams }: ActionParams) => {
   console.log('exec action', actionName, actionParams)
   const parsedBlockID = blockID ? getFullBlockId(blockID) : undefined
-  // this table
-  let table = await nb.fetch(window.location.href)
-  // this row 
-  let obj = table.rows.find((o: any) => o.id === parsedBlockID)
-
   const data = await browser.storage.sync.get(['serverHost', 'authToken', 'actionTableUrl'])
   let { serverHost, authToken, actionTableUrl } = data;
 
@@ -100,30 +117,40 @@ export const doAction = async ({ actionCode, blockID, actionName, actionParams }
     } else {
       switch (func.lang) {
         case "JavaScript":
-          let code = func.code
+          const code = func.code
+          if (!code) return;
           try {
             console.log(actionParams);
+            const _actionParams = actionParams ? actionParams : [];
             if (func.isGlobal) {
               // FIXME: 占定为带参数的函数只能执行一次
+              // eslint-disable-next-line
               const funcBody = eval(code)
-              await funcBody(...actionParams)
               console.log("exec global action");
+              return await funcBody(..._actionParams)
             } else {
+              // 非全局 action 才有上下文
+              // this table
+              let table = await nb.fetch(window.location.href)
+              // this row 
+              let obj = table.rows.find((o: any) => o.id === parsedBlockID)
               console.log("obj is >>>>>", obj);
               if (!obj) {
                 console.log("action applay on all rows");
                 table.rows.map(async (_obj: any) => {
+                  // eslint-disable-next-line
                   let obj = _obj;
+                  // eslint-disable-next-line
                   const funcBody = eval(code)
-                  await funcBody(...actionParams)
+                  return await funcBody(..._actionParams)
                 })
               } else {
                 console.log("action applay on one row");
+                // eslint-disable-next-line
                 const funcBody = eval(code)
-                await funcBody(...actionParams)
+                return await funcBody(..._actionParams)
               }
             }
-            showMsg(`Action: ${actionName} done ✔`)
           } catch (error) {
             console.log(error)
             showMsg("oops~ something error\n checkout devtools console")

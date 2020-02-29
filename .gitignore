@@ -1,6 +1,8 @@
 .vscode
 .DS_Store
 
+node_modules
+
 # pipenv install foo  --skip-lock 
 Pipfile.lock
 
