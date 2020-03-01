@@ -41,11 +41,11 @@ export const getAllActionCode = async () => {
     const actions = await nb.fetch(actionTableUrl)
     actions.rows.forEach((actionRow: any) => {
       let hasChildrenTask = Boolean(actionRow.Children)
-      const actionRowName: string = actionRow.Name
+      const actionRowName: string = actionRow && actionRow.Name
       if (hasChildrenTask && actionRowName) {
         actionCode[actionRowName] = {
           hasChildrenTask,
-          children: actionRow.Children.map((r: any) => r.Name),
+          children: actionRow.Children.filter((r: any) => r).map((r: any) => r.Name),
           childrenType: actionRow.ChildrenType,
           isGlobal: actionRow.IsGlobal,
         }
@@ -83,6 +83,7 @@ interface ActionParams {
 export const doAction = async ({ actionCode, blockID, actionName, actionParams }: ActionParams) => {
   console.log('exec action', actionName, actionParams)
   const parsedBlockID = blockID ? getFullBlockId(blockID) : undefined
+  console.log(parsedBlockID)
   const data = await browser.storage.sync.get(['serverHost', 'authToken', 'actionTableUrl'])
   let { serverHost, authToken, actionTableUrl } = data;
 
@@ -133,22 +134,24 @@ export const doAction = async ({ actionCode, blockID, actionName, actionParams }
               // this table
               let table = await nb.fetch(window.location.href)
               // this row 
-              let obj = table.rows.find((o: any) => o.id === parsedBlockID)
-              console.log("obj is >>>>>", obj);
-              if (!obj) {
-                console.log("action applay on all rows");
-                table.rows.map(async (_obj: any) => {
-                  // eslint-disable-next-line
-                  let obj = _obj;
-                  // eslint-disable-next-line
-                  const funcBody = eval(code)
-                  return await funcBody(..._actionParams)
-                })
-              } else {
+              let records = table.rows.filter((o: any) => o.id === parsedBlockID)
+              console.log("obj is >>>>>", records);
+              if (records.length === 1) {
                 console.log("action applay on one row");
                 // eslint-disable-next-line
                 const funcBody = eval(code)
                 return await funcBody(..._actionParams)
+                // return showMsg(`${actionCode} is not a function`);
+              } else {
+                console.log("action applay on all rows");
+                table.client.startAtomic();
+                records = table.rows;
+                // eslint-disable-next-line
+                const funcBody = eval(code)
+                const res = await funcBody(..._actionParams)
+                table.client.endAtomic();
+                return res;
+                // return showMsg(`${actionCode} is not a function`);
               }
             }
           } catch (error) {

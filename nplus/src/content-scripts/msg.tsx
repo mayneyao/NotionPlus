@@ -3,6 +3,11 @@ import Snackbar from '@material-ui/core/Snackbar';
 import { render } from 'react-dom'
 
 export const showMsg = (msg: string) => {
+
+  const msgBoxDiv = document.getElementById("NotionPlusMsg")
+  if (msgBoxDiv) {
+    msgBoxDiv.remove()
+  }
   const reactRoot = document.createElement('div')
   reactRoot.setAttribute('id', 'NotionPlusMsg')
   document.body.append(reactRoot)
@@ -17,7 +22,9 @@ export const Msg: React.FC<{ msg: string }> = ({ msg }) => {
     }
     setOpen(false);
     const msgMountNode = document.getElementById('NotionPlusMsg')
-    msgMountNode!.outerHTML = ''
+    if (msgMountNode) {
+      msgMountNode.remove()
+    }
   };
 
   return (
