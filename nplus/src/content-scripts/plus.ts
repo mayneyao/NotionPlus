@@ -71,7 +71,7 @@ const handleKeyPress = (e: KeyboardEvent, actionCode: any) => {
   if (e.code === "ArrowRight") {
     const searchRes = document.querySelectorAll(`#notion-app > div > div.notion-overlay-container.notion-default-overlay-container >
      div > div > div > div > div > div > section > div > div > div`)
-    const selectItem = searchRes && Array.from(searchRes).find(item => (item as HTMLLIElement).style.background === "rgba(55, 53, 47, 0.08)")
+    const selectItem = searchRes && Array.from(searchRes).find(item => (item as HTMLLIElement).style.backgroundColor === "rgba(55, 53, 47, 0.08)")
     if (selectItem) {
       const selectPageText = (selectItem!.firstChild!.childNodes[1].firstChild! as HTMLLIElement).innerText;
       // console.log(selectPageText);
@@ -96,6 +96,6 @@ const loadNotionPlus = (actionCode: any) => {
     console.warn("请在 NotionPlus 选项配置页中填入 ActionTableUrl，否则插件不会正常工作")
   }
   loadNotionPlus(actionCode)
-  console.log('NotionPlus V2.0.0');
+  console.log('NotionPlus V2.0.1');
   // console.log('try `const data = await nb.fetch(window.location.href)` via browser console');
 })();
