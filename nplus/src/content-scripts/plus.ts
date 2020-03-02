@@ -1,15 +1,18 @@
 import { doAction, getAllActionCode } from './core'
-import { showMsg } from './msg'
+import { showMsg, MsgHorizontalType } from './msg'
 import Notabase from 'notabase'
 
 
+// 注册控制台和 Action 可调用的全局对象
 declare global {
   interface Window {
-    nb: Notabase
+    nb: Notabase;
+    showMsg: (s: string, t: MsgHorizontalType) => void;
   }
 }
 
 window.nb = new Notabase()
+window.showMsg = showMsg;
 
 const getNotionContext = () => {
   const pathNameList = window.location.pathname.split('/')
@@ -24,6 +27,24 @@ const getNotionContext = () => {
   }
 }
 
+
+// interface IActionRes {
+//   success: boolean;
+//   msg: string;
+//   data: {
+//     icon: string;
+//     title: string;
+//     desc?: string;
+//     action?: () => void;
+//   }
+// }
+
+// const onActionDone = (res?: IActionRes) => {
+//   if (res?.success) {
+//     console.log("任务执行完毕")
+//   }
+// }
+
 const doActionWrapper = ({ actionCode, actionName, actionParams }: any) => {
   console.log(actionCode);
   console.log("ready to exec", actionName, actionParams)
@@ -36,12 +57,12 @@ const doActionWrapper = ({ actionCode, actionName, actionParams }: any) => {
       blockID: notionContext.selectedRecordId,
     }).then(res => {
       console.log("action res", res)
-
-      showMsg(`Action: ${actionName} done ✔`)
+      showMsg(`Action: ${actionName} done ✔`, MsgHorizontalType.left)
+      // onActionDone(res);
     })
-    showMsg(`Exec Action: ${actionName}`);
+    showMsg(`Exec Action: ${actionName}`, MsgHorizontalType.left);
   } else {
-    showMsg(`Action: ${actionName} Not Found!`);
+    showMsg(`Action: ${actionName} Not Found!`, MsgHorizontalType.left);
     console.log(`Action: ${actionName} Not Found!`)
   }
 }
@@ -71,7 +92,13 @@ const handleKeyPress = (e: KeyboardEvent, actionCode: any) => {
   if (e.code === "ArrowRight") {
     const searchRes = document.querySelectorAll(`#notion-app > div > div.notion-overlay-container.notion-default-overlay-container >
      div > div > div > div > div > div > section > div > div > div`)
-    const selectItem = searchRes && Array.from(searchRes).find(item => (item as HTMLLIElement).style.backgroundColor === "rgba(55, 53, 47, 0.08)")
+    const recentRes = document.querySelectorAll(`#notion-app > div > div.notion-overlay-container.notion-default-overlay-container >
+     div > div > div > div > div > div > main > div > div > ul > div`)
+    let res = searchRes;
+    if (searchRes.length) res = searchRes;
+    if (recentRes.length && !searchRes.length) res = recentRes;
+
+    const selectItem = res && Array.from(res).find(item => (item as HTMLLIElement).style.backgroundColor === "rgba(55, 53, 47, 0.08)")
     if (selectItem) {
       const selectPageText = (selectItem!.firstChild!.childNodes[1].firstChild! as HTMLLIElement).innerText;
       // console.log(selectPageText);
@@ -96,6 +123,6 @@ const loadNotionPlus = (actionCode: any) => {
     console.warn("请在 NotionPlus 选项配置页中填入 ActionTableUrl，否则插件不会正常工作")
   }
   loadNotionPlus(actionCode)
-  console.log('NotionPlus V2.0.1');
+  console.log('NotionPlus V2.0.2');
   // console.log('try `const data = await nb.fetch(window.location.href)` via browser console');
 })();

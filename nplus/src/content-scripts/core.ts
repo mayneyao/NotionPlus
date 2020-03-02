@@ -1,6 +1,9 @@
+/**
+ * action 执行相关逻辑
+ */
 import Notabase, { getFullBlockId } from 'notabase';
+import { showMsg, MsgHorizontalType } from './msg';
 
-import { showMsg } from './msg';
 const nb = new Notabase()
 
 export interface IActionCode {
@@ -24,7 +27,6 @@ export const getEnv = async () => {
   const data = await browser.storage.sync.get(['envTableUrl'])
   const { envTableUrl } = data
   const envs = await nb.fetch(envTableUrl)
-
   envs.rows.forEach(row => {
     const { Key, Value } = row
     ENV[Key as string] = Value as string
@@ -124,11 +126,13 @@ export const doAction = async ({ actionCode, blockID, actionName, actionParams }
             console.log(actionParams);
             const _actionParams = actionParams ? actionParams : [];
             if (func.isGlobal) {
-              // FIXME: 占定为带参数的函数只能执行一次
+              nb.startAtomic();
               // eslint-disable-next-line
               const funcBody = eval(code)
               console.log("exec global action");
-              return await funcBody(..._actionParams)
+              const res = await funcBody(..._actionParams)
+              nb.endAtomic();
+              return res
             } else {
               // 非全局 action 才有上下文
               // this table
@@ -144,19 +148,19 @@ export const doAction = async ({ actionCode, blockID, actionName, actionParams }
                 // return showMsg(`${actionCode} is not a function`);
               } else {
                 console.log("action applay on all rows");
-                table.client.startAtomic();
+                nb.startAtomic();
                 records = table.rows;
                 // eslint-disable-next-line
                 const funcBody = eval(code)
                 const res = await funcBody(..._actionParams)
-                table.client.endAtomic();
+                nb.endAtomic();
                 return res;
                 // return showMsg(`${actionCode} is not a function`);
               }
             }
           } catch (error) {
             console.log(error)
-            showMsg("oops~ something error\n checkout devtools console")
+            showMsg("oops~ something error\n checkout devtools console", MsgHorizontalType.left)
           }
           break
         case "Python":

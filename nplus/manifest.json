@@ -1,6 +1,6 @@
 {
   "name": "NotionPlus",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Programming in Notion.so",
   "permissions": [
     "storage"
@@ -14,12 +14,6 @@
   "__firefox__options_ui": {
     "page": "options.html",
     "browser_style": true
-  },
-  "background": {
-    "scripts": [
-      "/static/js/background.js"
-    ],
-    "persistent": false
   },
   "content_scripts": [
     {
