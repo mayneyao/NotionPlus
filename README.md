@@ -1,57 +1,23 @@
 # NotionPlus
 
-## Features
-
-https://www.youtube.com/watch?v=6Nn-NnXiQiU
-
-## Getting Started ([中文文档](https://gine.me/posts/cc5deab1a79f443c919b41ec80a50b7d))
-
-### Prerequisites
-
-+ python3
-+ pipenv
-
-
-### Installing
-
-1. install [chrome extension](https://chrome.google.com/webstore/detail/notionplus/mlmicgheiiebfodpmpgcekbhkeipeald)
-2. get source code and install requirements
-```
-git clone https://github.com/mayneyao/NotionPlus.git
-cd NotionPlus
-pipenv install
-```
+[https://www.notion.so/NotionPlus-71508def3f5045a2a4d68909cf0727fe](https://www.notion.so/NotionPlus-71508def3f5045a2a4d68909cf0727fe)
 
 ## Deployment
 
-### Config 
+```shell
 
-1. backend config 
-```
-cp config.sample.ini config.ini
-```
+cd nplus
+yarn
 
-+ token: get `token_v2` from  cookies 
-+ timezone: 
-+ auth_token: nobody knows but you
+// start dev server
+yarn start
 
-2. chrome extension config
-
-+ serverHost: If you run the backend service locally, it should be http://127.0.0.1:5000
-+ authToken: Same as `conf.ini > security > auth_token`  (nobody knows but you)
-+ actionTableUrl: Where dynamic task code is (a notion table browser url)
-
-### Run
+// build 
+yarn build chrome 
+// or
+yarn build firefox
 
 ```
-./run.sh 
-```
-
-## Built With
-
-* [notion-py](https://github.com/mayneyao/notion-py) - Notion.so API(forked from jamalex/notion-py)
-* [create-react-browser-extension](https://github.com/gxvv/create-react-browser-extension) - Easy to make chrome extension
-
 
 ## Changelog
 
@@ -59,6 +25,7 @@ see the [tags on this repository](https://github.com/mayneyao/NotionPlus/tags).
 
 ## Acknowledgments
 
+* [create-react-browser-extension](https://github.com/gxvv/create-react-browser-extension) - Easy to make chrome extension
 * [@jamalex/notion-py](https://github.com/jamalex/notion-py)
 
 ## License
