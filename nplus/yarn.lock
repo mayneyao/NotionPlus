@@ -6752,10 +6752,10 @@ normalize-url@^3.0.0:
   resolved "https://registry.npm.taobao.org/normalize-url/download/normalize-url-3.3.0.tgz#b2e1c4dc4f7c6d57743df733a4f5978d18650559"
   integrity sha1-suHE3E98bVd0PfczpPWXjRhlBVk=
 
-notabase@^0.9.3:
-  version "0.9.3"
-  resolved "https://registry.yarnpkg.com/notabase/-/notabase-0.9.3.tgz#280469a0e3c8a4f10b80540aaab243cbc982c8f3"
-  integrity sha512-xbujKrNbm/2F0MxLx+R85c3KIa9GYutl0glLwZTbnGbEeQ0W331z2oiKt3wTS1/+gM9RfurKqHlIZ+XtN1PZ8A==
+notabase@^0.9.5:
+  version "0.9.5"
+  resolved "https://registry.yarnpkg.com/notabase/-/notabase-0.9.5.tgz#fdb19d9986b4a0c856ef155b71bdf21c4f8610cf"
+  integrity sha512-uCCWHrS91OcSyFq/b8DPh3PIHYPX3D/b9pd3zctv9r1dlgZo/92Tx8tB5Sh8s7tUYhF3ekUGj1dLZFOyfNFh8w==
   dependencies:
     "@types/node" "^13.7.6"
     axios "^0.19.0"

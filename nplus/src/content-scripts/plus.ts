@@ -123,6 +123,6 @@ const loadNotionPlus = (actionCode: any) => {
     console.warn("请在 NotionPlus 选项配置页中填入 ActionTableUrl，否则插件不会正常工作")
   }
   loadNotionPlus(actionCode)
-  console.log('NotionPlus V2.0.2');
+  console.log('NotionPlus V2.0.3');
   // console.log('try `const data = await nb.fetch(window.location.href)` via browser console');
 })();
